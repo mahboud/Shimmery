@@ -28,11 +28,14 @@
 - (void)viewDidLoad {
 	[super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-	_shimmerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 240, 48)];
-	_shimmerLabel.text = @"Shimmer Me!";
-	_shimmerLabel.textColor = UIColor.whiteColor;
+	_shimmerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, _targetView.frame.size.width, 60)];
+  _shimmerLabel.numberOfLines = 2;
+  _shimmerLabel.textAlignment = NSTextAlignmentCenter;
+  _shimmerLabel.text = @"Shimmer Me!\n(Label)";
+  _shimmerLabel.textColor = UIColor.whiteColor;
 	_shimmerLabel.font = [UIFont systemFontOfSize:40];
-	_shimmerLabel.center = self.view.center;
+  [_shimmerLabel sizeToFit];
+  _shimmerLabel.center = _targetView.center;
 	[_targetView addSubview:_shimmerLabel];
 
 	_shimmerView.shimmerDuration = _shimmerDurationSlider.value;
