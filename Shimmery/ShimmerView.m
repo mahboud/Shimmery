@@ -15,6 +15,7 @@
 @implementation ShimmerView
 {
 	CAGradientLayer *_gradient;
+  BOOL _run;
 }
 
 +(Class)layerClass {
@@ -24,7 +25,7 @@
 - (void)commonInit
 {
 	_gradient = (id)[self layer];
-	_gradient.startPoint = CGPointMake(0.0,0.40);
+	_gradient.startPoint = CGPointMake(0.0,0.5);
 	_gradient.endPoint = CGPointMake(1.0,0.5);
 }
 
@@ -49,41 +50,47 @@
 }
 
 - (void)startShimmer {
-	[self doShimmer];
+  _run = YES;
+  [self doShimmer];
+}
+
+- (void)stopShimmer {
+  _run = NO;
 }
 
 - (void)doShimmer {
+	_gradient.startPoint = CGPointMake(0.0,0.5);
+	_gradient.endPoint = CGPointMake(1.0,0.5);
+
 	_gradient.colors = @[
-						 (id)[UIColor colorWithWhite:0.0 alpha:1.0].CGColor,
-						 (id)[UIColor colorWithWhite:0.0 alpha:1.0-_shimmerOpacity].CGColor,
-						 (id)[UIColor colorWithWhite:0.0 alpha:1.0].CGColor,
-						 (id)[UIColor colorWithWhite:0.0 alpha:1.0-_shimmerOpacity].CGColor,
-						 (id)[UIColor colorWithWhite:0.0 alpha:1.0].CGColor];
-	
+						 (id)[UIColor colorWithWhite:1.0 alpha:1.0].CGColor,
+						 (id)[UIColor colorWithWhite:0.0 alpha:1.0 - _shimmerOpacity].CGColor,
+						 (id)[UIColor colorWithWhite:1.0 alpha:1.0].CGColor
+						 ];
+
 	NSArray *newLocations = @[@(1.0),
 							  @(1.0 + _shimmerWidth),
-							  @(1.0 + 2*_shimmerWidth),
-							  @(1.0 + 3*_shimmerWidth),
-							  @(1.0 + 4*_shimmerWidth)];
-	NSArray *oldLocations = @[@(-4*_shimmerWidth),
-							  @(-3*_shimmerWidth),
-							  @(-2*_shimmerWidth),
-							  @(-1*_shimmerWidth),
-							  @(0*_shimmerWidth)] ;
-	CABasicAnimation *startPointAnimation = [CABasicAnimation animationWithKeyPath:@"locations"];
-	[startPointAnimation setDuration:_shimmerSpeed];
-	[startPointAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-	[startPointAnimation setFromValue:oldLocations];
-	[startPointAnimation setToValue:newLocations];
-	//  [startPointAnimation setFillMode:kCAFillModeForwards];
-	//  [startPointAnimation setRemovedOnCompletion:YES];
-	[startPointAnimation setDelegate:self];
+							  @(1.0 + 2 * _shimmerWidth)];
+	NSArray *oldLocations = @[@(-3 * _shimmerWidth),
+							  @(-2 * _shimmerWidth),
+							  @(- _shimmerWidth)];
+
+	CABasicAnimation *locationsAnimation = [CABasicAnimation animationWithKeyPath:@"locations"];
+	[locationsAnimation setDuration:_shimmerDuration];
+	[locationsAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+	[locationsAnimation setFromValue:oldLocations];
+	[locationsAnimation setToValue:newLocations];
+	//  [locationsAnimation setFillMode:kCAFillModeForwards];
+	//  [locationsAnimation setRemovedOnCompletion:YES];
+	[locationsAnimation setDelegate:self];
 	[_gradient setLocations:newLocations];
-	[_gradient addAnimation:startPointAnimation forKey:@"locations"];
+	[_gradient addAnimation:locationsAnimation forKey:@"just location change"];
 }
 
 - (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)flag {
-	[self doShimmer];
+  if (_run) {
+    [self doShimmer];
+  }
 }
 
 @end

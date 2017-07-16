@@ -11,7 +11,7 @@
 @interface ShimmerView : UIView
 @property (nonatomic) CGFloat shimmerWidth;
 @property (nonatomic) CGFloat shimmerOpacity;
-@property (nonatomic) NSTimeInterval shimmerSpeed;
+@property (nonatomic) NSTimeInterval shimmerDuration;
 
 - (void)startShimmer;
 
